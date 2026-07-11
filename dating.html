@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌸专属约会邀请函🌸</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", "苹方", sans-serif;
+        }
+        body {
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(160deg, #ffe6ef, #ffd6f0, #e7d8ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        /* 多色飘落装饰 */
+        .heart {
+            position: absolute;
+            opacity: 0.6;
+            animation: fall linear infinite;
+            pointer-events: none;
+        }
+        .heart.type1 { color: #ff8fb1; }
+        .heart.type2 { color: #b491ff; }
+        .heart.type3 { color: #ffd06b; }
+        @keyframes fall {
+            0% {transform: translateY(-10vh) rotate(0deg);opacity: 0;}
+            10% {opacity: 0.9;}
+            90% {opacity: 0.7;}
+            100% {transform: translateY(100vh) rotate(360deg);opacity: 0;}
+        }
+        .card, .pop-content {
+            background: #fff;
+            width: min(94%, 580px);
+            padding: 42px 32px;
+            border-radius: 36px;
+            box-shadow: 0 10px 35px rgba(255, 130, 168, 0.28);
+            text-align: center;
+            border: 3px solid #ffe1ec;
+        }
+        .title {
+            font-size: 26px;
+            color: #ff598b;
+            margin-bottom: 18px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            line-height: 1.4;
+        }
+        .desc-text, .pop-desc {
+            font-size: 16px;
+            color: #663a4c;
+            line-height: 1.7;
+            margin-bottom: 28px;
+        }
+        .btn-box {
+            display: flex;
+            gap: 22px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        button {
+            width: 145px;
+            height: 52px;
+            border: none;
+            border-radius: 999px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: visible;
+            text-align: center;
+        }
+        .btn-yes {
+            background: linear-gradient(135deg, #ff6b9d, #ff487e);
+            color: white;
+            box-shadow: 0 5px 16px rgba(255, 80, 130, 0.35);
+        }
+        .btn-yes:hover {transform: scale(1.06);box-shadow: 0 7px 22px rgba(255, 80, 130, 0.45);}
+        #noBtn {
+            background: #fff0f5;
+            color: #996077;
+            border: 2px solid #ffd2e0;
+            transition: transform 0.2s;
+        }
+        #noBtn:hover {background: #ffe1ec;}
+        .pop-mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.35);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+        .pop-title {
+            font-size: 24px;
+            color: #ff477e;
+            margin-bottom: 14px;
+            line-height: 1.4;
+        }
+        .pop-btn {
+            padding: 11px 36px;
+            background: linear-gradient(135deg, #ff6b9d, #ff487e);
+            color: white;
+            border: none;
+            border-radius: 999px;
+            font-size: 16px;
+            margin-top: 10px;
+            white-space: nowrap;
+            overflow: visible;
+            text-align: center;
+        }
+        .form-item {
+            margin: 16px 0;
+            text-align: left;
+        }
+        .form-item label {
+            display: block;
+            font-size: 15px;
+            color: #663a4c;
+            margin-bottom: 6px;
+        }
+        .form-item select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #ffdde9;
+            border-radius: 14px;
+            font-size: 15px;
+            background: #fff;
+        }
+        .form-item select:focus {border-color: #ff79a2;}
+        .mood-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 8px;
+            justify-content: center;
+        }
+        .mood-tag {
+            padding: 7px 14px;
+            border: 2px solid;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        .mood-tag:nth-child(odd) {border-color:#ffb3c2;background:#fff0f4;}
+        .mood-tag:nth-child(even) {border-color:#c9b4ff;background:#f5f0ff;}
+        .mood-tag.active {
+            background: #ff79a2;
+            color: white;
+            border-color: #ff487e;
+        }
+        .summary-line {
+            font-size: 16px;
+            margin: 10px 0;
+            color: #442835;
+            text-align: left;
+            padding-left: 8px;
+        }
+        .summary-humor {
+            margin: 20px 0;
+            padding: 12px;
+            background: linear-gradient(120deg,#fff0f5,#f3e9ff);
+            border-radius: 16px;
+            font-size: 15px;
+            color: #ff598b;
+        }
+        .submit-tip {
+            margin-top:16px;
+            font-size:13px;
+            color:#996077;
+        }
+    </style>
+</head>
+<body>
+    <!-- Formspree备用邮件通道，自行替换action链接 -->
+    <form id="sendForm" action="https://formspree.io/f/xxxxxx" method="POST" hidden>
+        <input type="text" name="约会完整时间" id="timeInput">
+        <input type="text" name="选择美食" id="foodInput">
+        <input type="text" name="约会氛围" id="moodInput">
+        <input type="email" name="接收邮箱" value="2056885362@qq.com">
+    </form>
+
+    <!-- 首页卡片 -->
+    <div class="card" id="homeCard">
+        <h1 class="title">🌸可以和我一起约会吗🌸</h1>
+        <p class="desc-text">系统检测到对方有一丢丢紧张👉👈</p>
+        <div class="btn-box">
+            <button class="btn-yes" id="yesBtn">我愿意🥰</button>
+            <button id="noBtn">再想想🥺</button>
+        </div>
+        <div style="margin-top:20px;font-size:30px;">🥧💐🍓🐰🎀</div>
+    </div>
+
+    <!-- 弹窗1：确认弹窗 -->
+    <div class="pop-mask" id="confirmPop">
+        <div class="pop-content">
+            <h2 class="pop-title">你真的点了愿意吗😭</h2>
+            <p class="pop-desc">说好了不许反悔哦😉</p>
+            <div style="font-size:36px;margin:10px 0;">🥹💞✨</div>
+            <button class="pop-btn" id="sureBtn">当然是真的！💖</button>
+        </div>
+    </div>
+
+    <!-- 弹窗2：时间选择 -->
+    <div class="pop-mask" id="timePop">
+        <div class="pop-content">
+            <h2 class="pop-title">📅那你什么时候有空？</h2>
+            <p class="pop-desc">我会准时去接你的🚗</p>
+            <div class="form-item">
+                <label>选择月份🗓️</label>
+                <select id="monthSel">
+                    <option value="">请选择月份</option>
+                    <option value="1月">1月❄️</option>
+                    <option value="2月">2月🌸</option>
+                    <option value="3月">3月🌷</option>
+                    <option value="4月">4月🌼</option>
+                    <option value="5月">5月💐</option>
+                    <option value="6月">6月☀️</option>
+                    <option value="7月">7月🍉</option>
+                    <option value="8月">8月🌿</option>
+                    <option value="9月">9月🍂</option>
+                    <option value="10月">10月🍁</option>
+                    <option value="11月">11月☕</option>
+                    <option value="12月">12月🎄</option>
+                </select>
+            </div>
+            <div class="form-item">
+                <label>选择日期📆</label>
+                <select id="daySel">
+                    <option value="">请先选择月份</option>
+                </select>
+            </div>
+            <div class="form-item">
+                <label>选择时段（24小时制/每半小时一档）⏰</label>
+                <select id="hourSel">
+                    <option value="">请选择出行时间</option>
+                    <option value="09:00">09:00</option>
+                    <option value="09:30">09:30</option>
+                    <option value="10:00">10:00</option>
+                    <option value="10:30">10:30</option>
+                    <option value="11:00">11:00</option>
+                    <option value="11:30">11:30</option>
+                    <option value="12:00">12:00</option>
+                    <option value="14:00">14:00</option>
+                    <option value="14:30">14:30</option>
+                    <option value="15:00">15:00</option>
+                    <option value="15:30">15:30</option>
+                    <option value="16:00">16:00</option>
+                    <option value="16:30">16:30</option>
+                    <option value="17:00">17:00</option>
+                    <option value="17:30">17:30</option>
+                    <option value="18:00">18:00</option>
+                    <option value="18:30">18:30</option>
+                    <option value="19:00">19:00</option>
+                    <option value="19:30">19:30</option>
+                    <option value="20:00">20:00</option>
+                    <option value="20:30">20:30</option>
+                    <option value="21:00">21:00</option>
+                    <option value="21:30">21:30</option>
+                </select>
+            </div>
+            <div style="font-size:28px;margin:8px 0;">🚶🌇🍜</div>
+            <button class="pop-btn" id="timeNextBtn">下一步挑选美食🍽️</button>
+        </div>
+    </div>
+
+    <!-- 弹窗3：美食+氛围 -->
+    <div class="pop-mask" id="foodPop">
+        <div class="pop-content">
+            <h2 class="pop-title">🍰想吃点什么好吃的？</h2>
+            <div class="form-item">
+                <label>热门美食选择🥘</label>
+                <select id="foodSel">
+                    <option value="">请挑选心仪美食</option>
+                    <option value="牛油火锅🌶️">牛油火锅🌶️</option>
+                    <option value="万州烤鱼🐟">万州烤鱼🐟</option>
+                    <option value="韩式炭火烤肉🥩">韩式炭火烤肉🥩</option>
+                    <option value="夜市烧烤烤串🍢">夜市烧烤烤串🍢</option>
+                    <option value="日式寿司刺身🍣">日式寿司刺身🍣</option>
+                    <option value="西式牛排意面🍝">西式牛排意面🍝</option>
+                    <option value="创意甜品下午茶🍰">创意甜品下午茶🍰</option>
+                    <option value="麻辣小龙虾🦞">麻辣小龙虾🦞</option>
+                    <option value="港式早茶点心🥟">港式早茶点心🥟</option>
+                    <option value="泰式酸辣料理🍜">泰式酸辣料理🍜</option>
+                    <option value="披萨小食拼盘🍕">披萨小食拼盘🍕</option>
+                    <option value="融合创意简餐🥗">融合创意简餐🥗</option>
+                    <option value="自助烤肉海鲜大餐🦐">自助烤肉海鲜大餐🦐</option>
+                    <option value="特色江湖菜小炒🍲">特色江湖菜小炒🍲</option>
+                    <option value="奶茶甜品小蛋糕🧁">奶茶甜品小蛋糕🧁</option>
+                    <option value="街边小吃扫街套餐🥪">街边小吃扫街套餐🥪</option>
+                    <option value="没有想吃的，直接开盲盒🎁">没有想吃的，直接开盲盒🎁</option>
+                </select>
+            </div>
+            <p class="pop-desc">挑选一下今天的约会氛围✨</p>
+            <div class="mood-box">
+                <div class="mood-tag">温柔安静🌙</div>
+                <div class="mood-tag">热闹欢乐🎉</div>
+                <div class="mood-tag">浪漫散步🌷</div>
+                <div class="mood-tag">探店打卡📸</div>
+                <div class="mood-tag">休闲下午茶🍵</div>
+                <div class="mood-tag">松弛躺平😌</div>
+                <div class="mood-tag">搞笑互怼🤪</div>
+                <div class="mood-tag">文艺慢逛🎨</div>
+                <div class="mood-tag">夜市烟火🔥</div>
+                <div class="mood-tag">萌宠治愈🐱</div>
+                <div class="mood-tag">短途漫步🚶</div>
+                <div class="mood-tag">电影休闲🎬</div>
+            </div>
+            <div style="font-size:28px;margin:8px 0;">🍡🎀🐇</div>
+            <button class="pop-btn" id="summaryBtn">确认全部选择💞</button>
+        </div>
+    </div>
+
+    <!-- 汇总页面 -->
+    <div class="pop-mask" id="summaryPop">
+        <div class="pop-content">
+            <div style="font-size:32px;">💌🥹✨</div>
+            <h2 class="pop-title">真开心你没有拒绝，期待和你的见面</h2>
+            <div class="summary-line">约会时间：<span id="showTime"></span></div>
+            <div class="summary-line">想吃美食：<span id="showFood"></span></div>
+            <div class="summary-line">约会氛围：<span id="showMood"></span></div>
+            <div class="summary-humor">收到🫡  不见不散哦😘</div>
+            <button class="pop-btn" id="submitBtn">不见不散💌</button>
+            <p class="submit-tip">期待与宝宝的见面哟💗</p>
+        </div>
+    </div>
+
+    <script>
+        // 飘落装饰
+        function createHeart() {
+            const heart = document.createElement('div');
+            const typeRand = Math.floor(Math.random()*3);
+            heart.classList.add('heart',`type${typeRand+1}`);
+            const iconList = ['♡','🌸','✿','💮','🌷'];
+            heart.innerHTML = iconList[Math.floor(Math.random()*iconList.length)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = Math.random() * 20 + 10 + 'px';
+            heart.style.animationDuration = Math.random() * 4 + 3 + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 7000);
+        }
+        setInterval(createHeart, 380);
+
+        let selectData = {month:"",day:"",hour:"",food:"",mood:""};
+        let activeMood = "";
+        // Server酱密钥
+        const SC_KEY = "SCT377876Tb00sYrYBJoAAhu0lPhc5lxS6";
+
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const confirmPop = document.getElementById('confirmPop');
+        const sureBtn = document.getElementById('sureBtn');
+        const timePop = document.getElementById('timePop');
+        const monthSel = document.getElementById('monthSel');
+        const daySel = document.getElementById('daySel');
+        const hourSel = document.getElementById('hourSel');
+        const timeNextBtn = document.getElementById('timeNextBtn');
+        const foodPop = document.getElementById('foodPop');
+        const foodSel = document.getElementById('foodSel');
+        const moodTags = document.querySelectorAll('.mood-tag');
+        const summaryBtn = document.getElementById('summaryBtn');
+        const summaryPop = document.getElementById('summaryPop');
+        const showTime = document.getElementById('showTime');
+        const showFood = document.getElementById('showFood');
+        const showMood = document.getElementById('showMood');
+        const submitBtn = document.getElementById('submitBtn');
+        const timeInput = document.getElementById('timeInput');
+        const foodInput = document.getElementById('foodInput');
+        const moodInput = document.getElementById('moodInput');
+        const sendForm = document.getElementById('sendForm');
+
+        // 月份联动日期
+        monthSel.onchange = function(){
+            daySel.innerHTML = '<option value="">请先选择月份</option>';
+            if(this.value){
+                for(let i=1;i<=31;i++){
+                    const opt = document.createElement('option');
+                    opt.value = i + '日';
+                    opt.innerText = i + '日';
+                    daySel.appendChild(opt);
+                }
+            }
+        }
+
+        // 拒绝按钮乱跑+切换文字
+        const noBtnTextList = ["再想想🥺","不要点我🥺","求求别点🥺","再考虑一下🥺"];
+        let textIndex = 0;
+        noBtn.addEventListener('mouseover', function() {
+            const x = Math.random() * 360 - 180;
+            const y = Math.random() * 220 - 110;
+            this.style.transform = `translate(${x}px, ${y}px)`;
+            textIndex = (textIndex + 1) % noBtnTextList.length;
+            this.innerText = noBtnTextList[textIndex];
+        })
+
+        yesBtn.onclick = () => confirmPop.style.display = 'flex';
+        sureBtn.onclick = () => {
+            confirmPop.style.display = 'none';
+            timePop.style.display = 'flex';
+        }
+
+        timeNextBtn.onclick = () => {
+            if(!monthSel.value || !daySel.value || !hourSel.value){
+                alert("请完整选择月份、日期、出行时段🥺");
+                return;
+            }
+            selectData.month = monthSel.value;
+            selectData.day = daySel.value;
+            selectData.hour = hourSel.value;
+            timePop.style.display = 'none';
+            foodPop.style.display = 'flex';
+        }
+
+        moodTags.forEach(tag => {
+            tag.onclick = () => {
+                moodTags.forEach(t => t.classList.remove('active'));
+                tag.classList.add('active');
+                activeMood = tag.innerText;
+                selectData.mood = activeMood;
+            }
+        })
+
+        summaryBtn.onclick = () => {
+            if(!foodSel.value || !activeMood){
+                alert("请挑选美食并选择约会氛围🥺");
+                return;
+            }
+            selectData.food = foodSel.value;
+            foodPop.style.display = 'none';
+            const fullTime = `${selectData.month} ${selectData.day} ${selectData.hour}`;
+            showTime.innerText = fullTime;
+            showFood.innerText = selectData.food;
+            showMood.innerText = selectData.mood;
+            summaryPop.style.display = 'flex';
+        }
+
+        // 提交：静默推送微信，无任何用户操作
+        submitBtn.onclick = () => {
+            const fullTime = `${selectData.month} ${selectData.day} ${selectData.hour}`;
+            timeInput.value = fullTime;
+            foodInput.value = selectData.food;
+            moodInput.value = selectData.mood;
+            // 表单后台提交（备用邮件通道）
+            sendForm.submit();
+
+            // 组装推送内容
+            const title = "收到约会回复💌";
+            const desc = `约会完整时间：${fullTime}\n想吃美食：${selectData.food}\n约会氛围：${selectData.mood}`;
+            // JSONP绕过跨域，静默推送微信
+            const script = document.createElement("script");
+            script.src = `https://sctapi.ftqq.com/${SC_KEY}.send?title=${encodeURIComponent(title)}&desp=${encodeURIComponent(desc)}`;
+            document.body.appendChild(script);
+            setTimeout(()=>script.remove(), 3000);
+
+            alert("提交成功！我已经收到你的约会安排啦");
+        }
+    </script>
+</body>
+</html>
